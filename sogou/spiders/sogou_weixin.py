@@ -20,8 +20,6 @@ class SogouWeixinSpider(scrapy.Spider):
     def start_requests(self):
         word = input('please input the word for search:')
         page = int(input('please input the start_page:'))
-        cookies = self.get_browser_cookies()
-        self.logger.debug('[+] get cookies is : %s' % cookies)
         #文章类抓取链接
         #yield scrapy.Request(url=self.page_article_url.format(word=word,page=page),callback=self.article_parse,meta={'page':page,'word':word,'retry_times':True},dont_filter=True)
         #公众号账号抓取链接

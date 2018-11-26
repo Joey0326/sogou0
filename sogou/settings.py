@@ -98,3 +98,5 @@ DOWNLOADER_MIDDLEWARES = {
     #'sogou.middlewares.ProxyMiddleware':811,
     'sogou.middlewares.CodeMiddleware':812,
 }
+
+COOKIES_FILE_PATH = 'cookies下载路径'

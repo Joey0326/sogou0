@@ -16,6 +16,7 @@ from PIL import Image
 import json
 import time
 import scrapy
+from sogou.settings import COOKIES_FILE_PATH
 
 
 class SogouSpiderMiddleware(object):
@@ -191,13 +192,14 @@ class CodeMiddleware(object):
         self.logger = logging.getLogger(__name__)
         self.new_cookies = {}
         self.login_url = 'https://weixin.sogou.com'
+        self.cookies_file_path = COOKIES_FILE_PATH
 
     def get_browser_cookies(self):
         '''
             从本地文件读取cookies，并转换成scrapy.Request的cookies格式
         '''
 
-        with open('/Users/joey/Desktop/Python_file/sogou0/cookies.json','r') as f:
+        with open(self.cookies_file_path,'r') as f:
             listCookie = json.loads(f.read())
 
         cookies = {}
@@ -241,7 +243,7 @@ class CodeMiddleware(object):
             listCookie = browser.get_cookies()
             self.logger.debug('[+] Chrome cookies is %s' % listCookie)
 
-            with open('/Users/joey/Desktop/Python_file/sogou0/cookies.json','w') as f:
+            with open(self.cookies_file_path,'w') as f:
                 f.write(json.dumps(listCookie))
 
             browser.close()
@@ -274,7 +276,7 @@ class CodeMiddleware(object):
             time.sleep(3)
 
             '''设置selenium浏览器的cookie'''
-            with open('/Users/joey/Desktop/Python_file/sogou0/cookies.json','r') as f:
+            with open(self.cookies_file_path,'r') as f:
                 listCookie = json.loads(f.read())
             time.sleep(1)
             for cookie in listCookie:
@@ -311,16 +313,17 @@ class CodeMiddleware(object):
                     self.logger.debug('[!] input_text fail !')
                     input_text = None
 
-                #获取提交验证码的button
-                self.logger.debug('[!] search button....')
-                try:
-                    button = wait.until(EC.element_to_be_clickable((By.ID,'submit')))
-                    self.logger.debug('[√] button done!')
-                except:
-                    self.logger.debug('[!] button fail!')
-
                 #判断是情况一还是情况二，如果情况一则直接返回带有新cookies值的Request
                 if input_text:
+
+                    #获取提交验证码的button
+                    self.logger.debug('[!] search button....')
+                    try:
+                        button = wait.until(EC.element_to_be_clickable((By.ID,'submit')))
+                        self.logger.debug('[√] button done!')
+                    except:
+                        self.logger.debug('[!] button fail!')
+
                     code = str(input('please input code:'))
 
                     input_text.clear()
@@ -336,7 +339,7 @@ class CodeMiddleware(object):
                             self.logger.debug('[+] Set new cookies: ')
                             new_listCookie = browser.get_cookies()
 
-                            with open('/Users/joey/Desktop/Python_file/sogou0/cookies.json','w') as f:
+                            with open(self.cookies_file_path,'w') as f:
                                 f.write(json.dumps(new_listCookie))
 
                             self.logger.info('[+] This is new_listCookie: %s' % new_listCookie )
@@ -347,10 +350,6 @@ class CodeMiddleware(object):
 
                 else:
                     new_listCookie = browser.get_cookies()
-                    '''
-                    with open('/Users/joey/Desktop/Python_file/sogou0/cookies.json','w') as f:
-                        f.write(json.dumps(new_listCookie))
-                    '''
                     self.logger.info('[+] This is new_listCookie: %s' % new_listCookie )
                     for cookie in new_listCookie:
                         name = cookie.get('name')
