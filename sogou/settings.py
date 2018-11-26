@@ -99,4 +99,4 @@ DOWNLOADER_MIDDLEWARES = {
     'sogou.middlewares.CodeMiddleware':812,
 }
 
-COOKIES_FILE_PATH = 'cookies下载路径'
+COOKIES_FILE_PATH = 'cookies.json'
